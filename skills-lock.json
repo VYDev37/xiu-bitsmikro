@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "react-nextjs-development": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-nextjs-development/SKILL.md",
+      "computedHash": "90b1c14ad793977d1eb0451fce46ea921ff5867acfe1b5d8c396ff944dfd6fc7"
+    },
+    "zod-validation-expert": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/zod-validation-expert/SKILL.md",
+      "computedHash": "7d1d2b83f3abaf36d27a25bb6390da963c42de28925f8298e6108f566524b4e4"
+    },
+    "zustand-store-ts": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/zustand-store-ts/SKILL.md",
+      "computedHash": "c79475b3882f1a17c902094dd667d521a5c08e3ef89579e43e8a275e97c2dd19"
+    }
+  }
+}
