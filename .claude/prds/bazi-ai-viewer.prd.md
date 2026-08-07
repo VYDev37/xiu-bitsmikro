@@ -35,10 +35,10 @@ We'll know we're right when **users actively engage with the chat and daily luck
 ## Delivery Milestones
 | # | Milestone | Outcome | Status | Plan |
 |---|---|---|---|---|
-| 1 | Auth & Profile | Users can register, login, and input birth data | in-progress | [implementation_plan.md](../../.gemini/antigravity-ide/brain/7b216406-e303-4dd5-9b84-be6f189462e0/implementation_plan.md) |
-| 2 | Core Layout | High-end oceanic theme and navbar applied | pending | — |
-| 3 | Today's Luck | Users can view their daily luck | pending | — |
-| 4 | AI Chat Interface | Users can query the AI engine | pending | — |
+| 1 | Auth & Profile | Users can register, login, and input birth data | completed | [implementation_plan.md](../../.gemini/antigravity-ide/brain/7b216406-e303-4dd5-9b84-be6f189462e0/implementation_plan.md) |
+| 2 | Core Layout | High-end oceanic theme and navbar applied | completed | — |
+| 3 | Today's Luck | Users can view their daily luck | completed | [.claude/plans/todays-luck.plan.md](../plans/todays-luck.plan.md) |
+| 4 | AI Chat Interface | Users can query the AI engine | completed | [.claude/plans/ai-chat-interface.plan.md](../plans/ai-chat-interface.plan.md) |
 
 ## Open Questions
 - [ ] What AI provider will be used for the backend chat integration?

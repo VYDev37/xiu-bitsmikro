@@ -19,16 +19,16 @@ export type LoginFormData = z.infer<typeof LoginSchema>;
 
 export const RegisterSchema = LoginSchema.extend({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  birthDate: z.string().optional(),
-  birthTime: z.string().optional(),
+  birthDate: z.string().optional().refine(val => !val || new Date(val) <= new Date(), "Date cannot be in the future"),
+  birthTime: z.string().optional().refine(val => !val || /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val), "Invalid time format"),
 });
 
 export type RegisterFormData = z.infer<typeof RegisterSchema>;
 
 export const ProfileUpdateSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  birthDate: z.string().optional(),
-  birthTime: z.string().optional(),
+  birthDate: z.string().optional().refine(val => !val || new Date(val) <= new Date(), "Date cannot be in the future"),
+  birthTime: z.string().optional().refine(val => !val || /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val), "Invalid time format"),
 });
 
 export type ProfileUpdateFormData = z.infer<typeof ProfileUpdateSchema>;

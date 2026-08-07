@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Engine | BaZi, Wuxing & 28 Xiu Mansions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --space-obsidian: #040914;
+            --space-deep: #0a1329;
+            --accent-glow: #818cf8;
+            --wuxing-wood: #10b981;
+            --wuxing-fire: #ef4444;
+            --wuxing-earth: #f59e0b;
+            --wuxing-metal: #e2e8f0;
+            --wuxing-water: #3b82f6;
+            --glass-bg: rgba(8, 16, 34, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.09);
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+        }
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background: radial-gradient(ellipse at 50% 10%, #0f1c3f 0%, #081026 45%, #030712 100%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            cursor: crosshair;
+        }
+        h1, h2, h3, h4, .serif {
+            font-family: 'Cinzel', serif;
+        }
+        .chinese-font {
+            font-family: 'Noto Serif SC', serif;
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
+        }
+        .glow-text {
+            text-shadow: 0 0 25px rgba(129, 140, 248, 0.5), 0 0 50px rgba(99, 102, 241, 0.2);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-glow);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        /* Crisp subtle noise texture */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+    <div class="noise-overlay"></div>
+    
+    <!-- ThreeJS Crisp Starry Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 top-0 px-8 py-4 bg-[#040914]/70 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="chinese-font text-indigo-400 font-bold text-xl">星宿</span>
+                <span class="serif text-xl tracking-widest font-bold uppercase border-l border-white/20 pl-3">Aetheria Celestial</span>
+            </div>
+            <div class="hidden md:flex space-x-10 text-xs tracking-[0.2em] uppercase">
+                <a href="#bazi" class="nav-link text-gray-400 hover:text-white">BaZi 四柱</a>
+                <a href="#wuxing" class="nav-link text-gray-400 hover:text-white">Wuxing 五行</a>
+                <a href="#xiu" class="nav-link text-gray-400 hover:text-white">28 Xiu 二十八宿</a>
+                <a href="#zodiac" class="nav-link text-gray-400 hover:text-white">Zodiac Constellations</a>
+            </div>
+            <button class="px-6 py-2 border border-indigo-400/30 bg-indigo-950/20 backdrop-blur-md rounded-full text-xs uppercase tracking-widest text-indigo-200 hover:bg-indigo-500 hover:text-white transition-all duration-500 shadow-[0_0_15px_rgba(129,140,248,0.2)]">
+                Calculate BaZi Chart
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="relative z-10">
+        <section class="min-h-screen pt-32 pb-20 flex flex-col justify-center items-center text-center px-4">
+            <div class="space-y-6 max-w-5xl opacity-0 mt-6" id="hero-content">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs tracking-[0.25em] uppercase mb-2">
+                    <span class="chinese-font">天人合一</span> • Chinese & Western Celestial Metaphysics
+                </div>
+                <h1 class="text-6xl md:text-8xl font-extrabold tracking-wider glow-text leading-tight">
+                    Empirical Cosmos &<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-white to-purple-300">Four Pillars of Destiny</span>
+                </h1>
+                <p class="text-gray-300 text-lg md:text-xl font-light max-w-3xl mx-auto mt-6 leading-relaxed">
+                    Unifying the 28 Chinese Lunar Mansions (<span class="chinese-font text-indigo-300">二十八宿</span>), 
+                    the Five Elemental Phases (<span class="chinese-font text-emerald-400">五</span><span class="chinese-font text-rose-400">行</span>), 
+                    and Western Zodiac Alignment under a high-definition crystal night sky.
+                </p>
+                
+                <div class="pt-10 flex flex-wrap justify-center gap-5">
+                    <a href="#bazi" class="glass-panel px-8 py-4 rounded-full uppercase tracking-widest text-xs hover:border-indigo-400/50 transition-all duration-500 flex items-center gap-3 group">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#10b981]"></span>
+                        Explore BaZi Alignment
+                    </a>
+                    <a href="#wuxing" class="glass-panel px-8 py-4 rounded-full uppercase tracking-widest text-xs hover:border-purple-400/50 transition-all duration-500 flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#38bdf8]"></span>
+                        Wuxing Energies
+                    </a>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-60">
+                <div class="text-[10px] uppercase tracking-[0.3em] text-indigo-300">Scroll to Explore</div>
+                <div class="w-[1px] h-12 bg-gradient-to-b from-indigo-400 to-transparent"></div>
+            </div>
+        </section>
+
+        <!-- Wuxing 5 Elements Interactive Row -->
+        <section id="wuxing" class="py-24 px-4 md:px-12 max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16">
+                <div class="text-xs uppercase tracking-[0.3em] text-indigo-400 mb-2">Fundamental Elemental Cycles</div>
+                <h2 class="text-4xl md:text-5xl serif font-bold">Wuxing Five Phases <span class="chinese-font text-3xl font-normal text-gray-400">五行</span></h2>
+                <p class="text-gray-400 max-w-xl mx-auto mt-4 text-sm font-light">
+                    The perpetual transformational flow of Wood, Fire, Earth, Metal, and Water governing cosmic balance and individual luck.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+                <!-- Wood -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-emerald-500/50 transition-all duration-500 group">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="chinese-font text-3xl font-bold text-emerald-400">木</span>
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">01 / Wood</span>
+                    </div>
+                    <h3 class="serif text-xl font-semibold mb-2 group-hover:text-emerald-300 transition-colors">Growth & Vitality</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Associated with East, Spring, Azure Dragon (青龙). Represents expansion and creative drive.</p>
+                </div>
+
+                <!-- Fire -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-rose-500/50 transition-all duration-500 group">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="chinese-font text-3xl font-bold text-rose-400">火</span>
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">02 / Fire</span>
+                    </div>
+                    <h3 class="serif text-xl font-semibold mb-2 group-hover:text-rose-300 transition-colors">Climax & Passion</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Associated with South, Summer, Vermilion Bird (朱雀). Represents illumination and transformation.</p>
+                </div>
+
+                <!-- Earth -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-amber-500/50 transition-all duration-500 group">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="chinese-font text-3xl font-bold text-amber-400">土</span>
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">03 / Earth</span>
+                    </div>
+                    <h3 class="serif text-xl font-semibold mb-2 group-hover:text-amber-300 transition-colors">Balance & Grounding</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Associated with Center, Transitions, Yellow Dragon (黄龙). Represents stability and nourishment.</p>
+                </div>
+
+                <!-- Metal -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-slate-300/50 transition-all duration-500 group">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="chinese-font text-3xl font-bold text-slate-200">金</span>
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">04 / Metal</span>
+                    </div>
+                    <h3 class="serif text-xl font-semibold mb-2 group-hover:text-slate-100 transition-colors">Harvest & Structure</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Associated with West, Autumn, White Tiger (白虎). Represents refinement, clarity, and precision.</p>
+                </div>
+
+                <!-- Water -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-blue-500/50 transition-all duration-500 group">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="chinese-font text-3xl font-bold text-blue-400">水</span>
+                        <span class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">05 / Water</span>
+                    </div>
+                    <h3 class="serif text-xl font-semibold mb-2 group-hover:text-blue-300 transition-colors">Wisdom & Storage</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Associated with North, Winter, Black Tortoise (玄武). Represents intuition and potential.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- BaZi 4 Pillars Interactive Showcase -->
+        <section id="bazi" class="py-24 px-4 md:px-12 max-w-7xl mx-auto relative z-10">
+            <div class="glass-panel rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex flex-col lg:flex-row justify-between gap-12 items-center">
+                    <div class="max-w-xl">
+                        <div class="text-xs uppercase tracking-[0.3em] text-indigo-400 mb-2">Four Pillars Architecture</div>
+                        <h2 class="text-4xl md:text-5xl serif font-bold mb-6">BaZi Chart Mapping <span class="chinese-font text-3xl font-normal text-indigo-300">八字命盘</span></h2>
+                        <p class="text-gray-300 text-sm font-light leading-relaxed mb-8">
+                            Calculated using the exact solar calendar (Winter Solstice Dongzhi calibration). Every individual is governed by Heavenly Stems (<span class="chinese-font">天干</span>) and Terrestrial Branches (<span class="chinese-font">地支</span>).
+                        </p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                                <div class="text-xs font-mono text-indigo-300 uppercase">Year Pillar (年柱)</div>
+                                <div class="text-lg font-bold mt-1">Ancestral & External</div>
+                            </div>
+                            <div class="p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                                <div class="text-xs font-mono text-indigo-300 uppercase">Month Pillar (月柱)</div>
+                                <div class="text-lg font-bold mt-1">Career & Environment</div>
+                            </div>
+                            <div class="p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                                <div class="text-xs font-mono text-indigo-300 uppercase">Day Pillar (日柱)</div>
+                                <div class="text-lg font-bold mt-1">Self & Inner Partner</div>
+                            </div>
+                            <div class="p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                                <div class="text-xs font-mono text-indigo-300 uppercase">Hour Pillar (时柱)</div>
+                                <div class="text-lg font-bold mt-1">Subconscious & Ambition</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Demo Pill Box -->
+                    <div class="w-full lg:w-96 flex flex-col gap-4">
+                        <div class="text-xs uppercase tracking-widest text-gray-400 text-center font-mono">Sample BaZi Energy Matrix</div>
+                        <div class="grid grid-cols-4 gap-2 text-center">
+                            <div class="glass-panel p-4 rounded-xl border-emerald-500/30">
+                                <div class="text-[10px] text-gray-500 font-mono">HOUR</div>
+                                <div class="chinese-font text-2xl font-bold text-emerald-400 my-1">甲</div>
+                                <div class="chinese-font text-xl text-emerald-300">辰</div>
+                                <div class="text-[10px] text-emerald-400/80 mt-1 font-mono">Wood Dragon</div>
+                            </div>
+                            <div class="glass-panel p-4 rounded-xl border-rose-500/30">
+                                <div class="text-[10px] text-gray-500 font-mono">DAY</div>
+                                <div class="chinese-font text-2xl font-bold text-rose-400 my-1">丙</div>
+                                <div class="chinese-font text-xl text-rose-300">午</div>
+                                <div class="text-[10px] text-rose-400/80 mt-1 font-mono">Fire Horse</div>
+                            </div>
+                            <div class="glass-panel p-4 rounded-xl border-amber-500/30">
+                                <div class="text-[10px] text-gray-500 font-mono">MONTH</div>
+                                <div class="chinese-font text-2xl font-bold text-amber-400 my-1">戊</div>
+                                <div class="chinese-font text-xl text-amber-300">申</div>
+                                <div class="text-[10px] text-amber-400/80 mt-1 font-mono">Earth Monkey</div>
+                            </div>
+                            <div class="glass-panel p-4 rounded-xl border-blue-500/30">
+                                <div class="text-[10px] text-gray-500 font-mono">YEAR</div>
+                                <div class="chinese-font text-2xl font-bold text-blue-400 my-1">壬</div>
+                                <div class="chinese-font text-xl text-blue-300">子</div>
+                                <div class="text-[10px] text-blue-400/80 mt-1 font-mono">Water Rat</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 28 Xiu Mansions & Western Zodiac Bento Grid -->
+        <section id="xiu" class="py-24 px-4 md:px-12 max-w-7xl mx-auto relative z-10">
+            <div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <div class="text-xs uppercase tracking-[0.3em] text-indigo-400 mb-2">Celestial Sphere Quadrants</div>
+                    <h2 class="text-4xl md:text-5xl serif font-bold">28 Xiu & Zodiac Constellations</h2>
+                </div>
+                <p class="text-gray-400 max-w-md text-sm font-light">
+                    Mapping the 28 Lunar Mansions (<span class="chinese-font text-indigo-300">二十八宿</span>) across the 4 cardinal celestial symbols and 12 zodiac houses.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[280px]" id="zodiac">
+                <!-- Azure Dragon Quadrant -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between group hover:border-emerald-500/40 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] uppercase font-mono text-emerald-400">East Quadrant</span>
+                            <h3 class="serif text-xl font-bold mt-1">Azure Dragon <span class="chinese-font font-normal text-emerald-300">青龙</span></h3>
+                        </div>
+                        <span class="chinese-font text-2xl text-emerald-400">角</span>
+                    </div>
+                    <p class="text-xs text-gray-400">Jiao (Horn), Kang (Neck), Di (Root), Fang (Room), Xin (Heart), Wei (Tail), Ji (Winnowing Basket).</p>
+                    <div class="text-[10px] font-mono text-gray-500 border-t border-white/5 pt-3">Spring Mansions • Wood Phase</div>
+                </div>
+
+                <!-- Vermilion Bird Quadrant -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between group hover:border-rose-500/40 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] uppercase font-mono text-rose-400">South Quadrant</span>
+                            <h3 class="serif text-xl font-bold mt-1">Vermilion Bird <span class="chinese-font font-normal text-rose-300">朱雀</span></h3>
+                        </div>
+                        <span class="chinese-font text-2xl text-rose-400">井</span>
+                    </div>
+                    <p class="text-xs text-gray-400">Jing (Well), Gui (Ghost), Liu (Willow), Xing (Star), Zhang (Extended Net), Yi (Wings), Zhen (Chariot).</p>
+                    <div class="text-[10px] font-mono text-gray-500 border-t border-white/5 pt-3">Summer Mansions • Fire Phase</div>
+                </div>
+
+                <!-- White Tiger Quadrant -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between group hover:border-slate-300/40 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] uppercase font-mono text-slate-300">West Quadrant</span>
+                            <h3 class="serif text-xl font-bold mt-1">White Tiger <span class="chinese-font font-normal text-slate-200">白虎</span></h3>
+                        </div>
+                        <span class="chinese-font text-2xl text-slate-200">奎</span>
+                    </div>
+                    <p class="text-xs text-gray-400">Kui (Legs), Lou (Bond), Wei (Stomach), Mao (Hairy Head), Bi (Net), Zi (Turtle Beak), Shen (Three Stars).</p>
+                    <div class="text-[10px] font-mono text-gray-500 border-t border-white/5 pt-3">Autumn Mansions • Metal Phase</div>
+                </div>
+
+                <!-- Black Tortoise Quadrant -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between group hover:border-blue-500/40 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] uppercase font-mono text-blue-400">North Quadrant</span>
+                            <h3 class="serif text-xl font-bold mt-1">Black Tortoise <span class="chinese-font font-normal text-blue-300">玄武</span></h3>
+                        </div>
+                        <span class="chinese-font text-2xl text-blue-400">斗</span>
+                    </div>
+                    <p class="text-xs text-gray-400">Dou (Dipper), Niu (Ox), Nu (Girl), Xu (Emptiness), Wei (Rooftree), Shi (Encampment), Bi (Wall).</p>
+                    <div class="text-[10px] font-mono text-gray-500 border-t border-white/5 pt-3">Winter Mansions • Water Phase</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Three.js High-Definition Starry Night Sky Canvas
+        const scene = new THREE.Scene();
+        // Clear, crisp deep mountain night sky fog
+        scene.fog = new THREE.FogExp2(0x081026, 0.0005);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2500);
+        camera.position.z = 450;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // 1. Crisp Starfield (Increased Count & Twinkle Phase)
+        const starsCount = 7500;
+        const starsGeometry = new THREE.BufferGeometry();
+        const posArray = new Float32Array(starsCount * 3);
+        const colorArray = new Float32Array(starsCount * 3);
+        const scaleArray = new Float32Array(starsCount);
+
+        for(let i = 0; i < starsCount; i++) {
+            const i3 = i * 3;
+            // Distribute in a large sphere
+            const r = 300 + Math.random() * 1100;
+            const theta = 2 * Math.PI * Math.random();
+            const phi = Math.acos(2 * Math.random() - 1);
+            
+            posArray[i3] = r * Math.sin(phi) * Math.cos(theta);
+            posArray[i3+1] = r * Math.sin(phi) * Math.sin(theta);
+            posArray[i3+2] = r * Math.cos(phi);
+
+            // Color palette: Crystal White, Sapphire Blue, Violet, Cyan
+            const mix = Math.random();
+            if (mix > 0.8) {
+                colorArray[i3] = 0.6; colorArray[i3+1] = 0.8; colorArray[i3+2] = 1.0; // Cyan/Blue star
+            } else if (mix > 0.6) {
+                colorArray[i3] = 0.9; colorArray[i3+1] = 0.7; colorArray[i3+2] = 1.0; // Soft Violet star
+            } else {
+                colorArray[i3] = 0.95; colorArray[i3+1] = 0.98; colorArray[i3+2] = 1.0; // Crystal White
+            }
+
+            scaleArray[i] = Math.random() * 1.8 + 0.5;
+        }
+
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        starsGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+        const starsMaterial = new THREE.PointsMaterial({
+            size: 1.4,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.95,
+            sizeAttenuation: true
+        });
+
+        const starMesh = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(starMesh);
+
+        // 2. Zodiac & Xiu Constellation Lines & Nodes
+        const linesMaterial = new THREE.LineBasicMaterial({ 
+            color: 0x818cf8, 
+            transparent: true, 
+            opacity: 0.25,
+            blending: THREE.AdditiveBlending
+        });
+
+        const nodesGeometry = new THREE.BufferGeometry();
+        const nodesCount = 220;
+        const nodesPos = new Float32Array(nodesCount * 3);
+        
+        for(let i = 0; i < nodesCount * 3; i++) {
+            nodesPos[i] = (Math.random() - 0.5) * 900;
+        }
+        nodesGeometry.setAttribute('position', new THREE.BufferAttribute(nodesPos, 3));
+        
+        // Connect close nodes to form abstract constellation meshes
+        const points = [];
+        for(let i=0; i<nodesCount; i++) {
+            const v1 = new THREE.Vector3(nodesPos[i*3], nodesPos[i*3+1], nodesPos[i*3+2]);
+            for(let j=i+1; j<nodesCount; j++) {
+                const v2 = new THREE.Vector3(nodesPos[j*3], nodesPos[j*3+1], nodesPos[j*3+2]);
+                if(v1.distanceTo(v2) < 95) {
+                    points.push(v1);
+                    points.push(v2);
+                }
+            }
+        }
+        
+        const lineGeom = new THREE.BufferGeometry().setFromPoints(points);
+        const lineMesh = new THREE.LineSegments(lineGeom, linesMaterial);
+        scene.add(lineMesh);
+
+        // Glowing Constellation Nodes
+        const nodeMaterial = new THREE.PointsMaterial({
+            color: 0xc7d2fe,
+            size: 3.5,
+            transparent: true,
+            opacity: 0.9,
+            blending: THREE.AdditiveBlending
+        });
+        const nodesMesh = new THREE.Points(nodesGeometry, nodeMaterial);
+        scene.add(nodesMesh);
+
+        // 3. Meteor Shower with Streaks
+        const meteors = [];
+        const meteorGeometry = new THREE.CylinderGeometry(0, 0.5, 75, 3);
+        meteorGeometry.rotateX(Math.PI / 2);
+        
+        const meteorMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xe0e7ff,
+            transparent: true,
+            opacity: 0.85,
+            blending: THREE.AdditiveBlending
+        });
+
+        function createMeteor() {
+            if (meteors.length > 4) return;
+            
+            const meteor = new THREE.Mesh(meteorGeometry, meteorMaterial);
+            meteor.position.set(
+                Math.random() * 1200 - 300, 
+                700 + Math.random() * 300, 
+                Math.random() * 700 - 350
+            );
+            
+            meteor.userData.velocity = new THREE.Vector3(-28, -22, 0);
+            meteor.quaternion.setFromUnitVectors(
+                new THREE.Vector3(0, 1, 0), 
+                meteor.userData.velocity.clone().normalize()
+            );
+
+            scene.add(meteor);
+            meteors.push(meteor);
+        }
+
+        // Smooth Mouse Parallax
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.05;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.05;
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            targetX = mouseX * 0.6;
+            targetY = mouseY * 0.6;
+            
+            camera.position.x += (targetX - camera.position.x) * 0.05;
+            camera.position.y += (-targetY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            // Subtle rotation of starry sky & constellations
+            starMesh.rotation.y = elapsedTime * 0.012;
+            starMesh.rotation.x = elapsedTime * 0.004;
+            
+            lineMesh.rotation.y = elapsedTime * 0.018;
+            nodesMesh.rotation.y = elapsedTime * 0.018;
+
+            // Trigger meteors
+            if (Math.random() > 0.98) createMeteor();
+
+            for (let i = meteors.length - 1; i >= 0; i--) {
+                const m = meteors[i];
+                m.position.add(m.userData.velocity);
+                
+                if (m.position.y < -500) {
+                    scene.remove(m);
+                    meteors.splice(i, 1);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.to("#hero-content", {
+            opacity: 1,
+            y: -15,
+            duration: 2.2,
+            ease: "power3.out",
+            delay: 0.2
+        });
+
+        ScrollTrigger.create({
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            onUpdate: (self) => {
+                gsap.to(camera.position, {
+                    z: 450 - (self.progress * 300),
+                    duration: 0.5,
+                    overwrite: "auto"
+                });
+            }
+        });
+
+        gsap.from(".glass-panel", {
+            scrollTrigger: {
+                trigger: "#wuxing",
+                start: "top 80%",
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.1,
+            ease: "power3.out"
+        });
+    </script>
+</body>
+</html>
