@@ -2,6 +2,7 @@ import Link from 'next/link';
 import HomeAnimations from '@/components/animations/HomeAnimations';
 import { AIChatSimulation, LuckBreathingStatus, ConstellationCarousel } from '@/components/animations/BentoMicroInteractions';
 import { HeroLuopan, BaguaGrid, WuxingWatermark, CelestialOrbit, XiuConstellation } from '@/components/animations/LandingGraphics';
+import ZodiacGrid from '@/components/animations/ZodiacGrid';
 
 export default function HomePage() {
   return (
@@ -174,6 +175,21 @@ export default function HomePage() {
             <p className="text-xs text-gray-400 leading-relaxed relative z-10">Associated with North, Winter, Black Tortoise (玄武). Represents intuition and potential.</p>
           </div>
         </div>
+      </section>
+
+      {/* Zodiac Circle */}
+      <section className="py-24 px-4 md:px-12 w-full relative z-10 overflow-hidden">
+        <div className="text-center mb-10">
+          <div className="text-xs uppercase tracking-[0.3em] text-blue-400 mb-2">Cosmic Cards</div>
+          <h2 className="text-4xl md:text-5xl serif font-bold">
+            The 12 Zodiacs <span className="chinese-font text-3xl font-normal text-gray-400">十二生肖</span>
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto mt-4 text-sm font-light">
+            Interactive representation of the 12 Earthly Branches mapped to their fundamental Wuxing elements. Click on any card to flip and reveal its inherent traits and emotional energy.
+          </p>
+        </div>
+        
+        <ZodiacGrid />
       </section>
 
       {/* BaZi 4 Pillars Interactive Showcase */}
