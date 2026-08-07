@@ -6,12 +6,12 @@ html {
 }
 
 :root {
-  --bg-deep: #060e1a;
-  --bg-surface: #0b1a2e;
-  --bg-glass: rgba(11, 26, 46, 0.6);
-  --border-glass: rgba(100, 200, 255, 0.12);
-  --border-glass-hover: rgba(100, 200, 255, 0.3);
-  --text-primary: #e8f4f8;
+  --bg-deep: #020617; /* Very deep night sky (slate-950) */
+  --bg-surface: #0f172a; /* Deep blue surface (slate-900) */
+  --bg-glass: rgba(15, 23, 42, 0.4);
+  --border-glass: rgba(56, 189, 248, 0.12); /* Sky-400 with low opacity */
+  --border-glass-hover: rgba(56, 189, 248, 0.25);
+  --text-primary: #f8fafc;
   --text-secondary: #8ab4c8;
   --text-muted: #5a8a9e;
   --accent: #0ea5e9;
@@ -61,8 +61,8 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.04;
-  background: radial-gradient(ellipse 800px 600px at 50% 50%, var(--accent-glow), transparent);
+  opacity: 0.05;
+  background: radial-gradient(ellipse 900px 600px at 50% -10%, rgba(56, 189, 248, 0.15), transparent);
   mix-blend-mode: screen;
 }
 
@@ -77,7 +77,7 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(6, 14, 26, 0.5);
+  background: rgba(2, 6, 23, 0.5); /* #020617 with opacity */
   backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
   transition: all 0.4s ease;
@@ -85,7 +85,7 @@ body::after {
 
 .nav.scrolled {
   padding: 0.75rem 3rem;
-  background: rgba(6, 14, 26, 0.85);
+  background: rgba(2, 6, 23, 0.85);
   border-bottom: 1px solid var(--border-glass);
 }
 
@@ -315,7 +315,7 @@ body::after {
   width: 100%;
   padding: 0.875rem 1rem;
   min-height: 44px; /* Touch target */
-  background: rgba(6, 14, 26, 0.4);
+  background: rgba(2, 6, 23, 0.6);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
   color: var(--text-primary);
@@ -404,7 +404,7 @@ body::after {
     align-items: center;
     justify-content: center;
     gap: 2.5rem;
-    background: rgba(6, 14, 26, 0.97);
+    background: rgba(2, 6, 23, 0.97);
     backdrop-filter: blur(20px);
     opacity: 0;
     visibility: hidden;
@@ -446,5 +446,17 @@ body::after {
 
   .particle {
     display: none;
+  }
+}
+
+/* ========== CUSTOM UTILITIES ========== */
+@layer utilities {
+  .glow-text {
+    text-shadow: 0 0 20px rgba(129, 140, 248, 0.4);
+  }
+
+  .mask-edges {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
   }
 }

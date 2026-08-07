@@ -1,24 +1,27 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
-import bcrypt from 'bcryptjs';
+import argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
+import { LoginSchema } from '@/schemas/user';
 
 export async function POST(request: Request) {
   try {
-    const { username, password } = await request.json();
-
-    if (!username || !password) {
+    const data = await request.json();
+    const parsed = await LoginSchema.safeParse(data);
+    if (!parsed.data) {
       return NextResponse.json({ error: 'Missing credentials' }, { status: 400 });
     }
+
+    const { username, password } = parsed.data;
 
     const user = db.select().from(users).where(eq(users.username, username)).get();
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const isMatch = bcrypt.compareSync(password, user.passwordHash);
+    const isMatch = await argon2.verify(user.passwordHash, password);
     if (!isMatch) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
@@ -29,7 +32,16 @@ export async function POST(request: Request) {
     session.username = user.username;
     await session.save();
 
-    return NextResponse.json({ success: true, user: { id: user.id, name: user.name, username: user.username } });
+    return NextResponse.json({ 
+      success: true, 
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        username: user.username,
+        birthDate: user.birthDate,
+        birthTime: user.birthTime
+      } 
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
