@@ -84,6 +84,7 @@ export async function GET() {
           systemInstruction: `${systemPrompt}\n\nPlease respond strictly in valid JSON format. Provide the response as a single JSON object without any Markdown formatting (no \`\`\`json blocks).`,
           responseMimeType: 'application/json',
           temperature: 0.3, // Lower temperature to reduce hallucinated syntax errors
+          maxOutputTokens: 8192,
         }
       });
 

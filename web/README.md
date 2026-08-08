@@ -1,46 +1,38 @@
-# BaZi AI Viewer - Web Application 🌊
+# Xiu (宿) Web Application
 
-This is the Next.js frontend and backend application for the **BaZi AI Metaphysics Engine**.
+This directory contains the core Next.js application for Xiu (宿), the AI-powered Chinese Metaphysics Engine.
 
-## 🚀 Quick Start
+## Features Overview
 
-1. **Install dependencies:**
-   ```bash
-   pnpm install
-   ```
+- **Interactive Metaphysics Dashboard**: Visualizes BaZi pillars, elemental balances, and zodiac signs using 3D flipping cards and interactive canvases.
+- **AI-Powered Insights**: Integrates with LLMs to generate daily luck readings, partner compatibility scores, and personalized monthly calendars.
+- **Persistent Chat Interface**: Connects users to the Xiu (宿) AI for esoteric consultations, with conversations securely stored in a local SQLite database.
 
-2. **Database Setup:**
-   Ensure you have pushed the Drizzle schema to your local SQLite database:
-   ```bash
-   pnpm db:push
-   ```
+## Tech Stack
 
-3. **Run the development server:**
-   ```bash
-   pnpm dev
-   ```
+- **Core**: Next.js (App Router), React
+- **Styling**: Tailwind CSS, GSAP, Framer Motion, Three.js
+- **Data & State**: Zustand, Zod, React Hook Form, Axios
+- **Backend & Database**: Next.js API Routes, Drizzle ORM, SQLite, Iron-Session
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup Instructions
 
-## 🌊 Aesthetic & Design System
+### 1. Install Dependencies
+```bash
+pnpm install
+```
 
-This application utilizes a premium **Abyssal (Deep Ocean)** theme, designed to feel like a high-end cinematic Vanguard system.
-- **Colors**: Deep Ocean Blue (`#060e1a`), Surface Blue (`#0b1a2e`), Teal (`#14b8a6`), and Accent Cyan (`#0ea5e9`).
-- **Typography**: `Playfair Display` for elegant, cinematic headings, and `Outfit` for clean, readable body text.
-- **3D Components**: Custom `OceanCanvas` utilizes raw WebGL shaders (via Three.js) for a dynamic, moving ocean background, complemented by floating cursor particles.
+### 2. Configure Environment
+Create a `.env.local` file containing your AI provider keys and session secrets.
 
-## ⚙️ Architecture
+### 3. Initialize Database
+Apply the database schema to your local SQLite instance:
+```bash
+pnpm db:push
+```
 
-- **Framework**: Next.js App Router (`/app`).
-- **Auth**: `iron-session` handles encrypted, stateless cookie sessions without relying on third-party services.
-- **Database**: `drizzle-orm` connecting to a local `sqlite` database (`db/index.ts`).
-- **State**: `zustand` is used for global client-side state management.
-- **Validation**: `zod` enforces strict runtime validation across all API routes and form inputs.
-
-## 🤖 AI Skills Configuration
-
-This project is configured with several AI agent skills inside `../.agents/skills` to maintain high code quality and design consistency:
-- `ui-ux-pro-max` & `taste-skill` (High-end aesthetic guidance)
-- `react-nextjs-development` & `react-nextjs-patterns` (React best practices)
-- `zod-validation-expert` (Schema and API validation)
-- `zustand-store-ts` (State management patterns)
+### 4. Start Development Server
+```bash
+pnpm dev
+```
+The application will be available at [http://localhost:3000](http://localhost:3000).

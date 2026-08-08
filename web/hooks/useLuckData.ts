@@ -12,7 +12,7 @@ export function useLuckData() {
     setLoading(true);
     setError('');
     try {
-      const { data } = await api.get<LuckData>('/api/luck');
+      const { data } = await api.get<LuckData>('/luck');
       setLuck(data);
     } catch (e: any) {
       setError(e.message || 'An unexpected error occurred while fetching your reading.');

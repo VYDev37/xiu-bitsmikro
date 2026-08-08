@@ -1,37 +1,49 @@
-# BaZi AI Viewer & Metaphysics Engine 🌊
+# Xiu (宿): Celestial Metaphysics Engine
 
-A modern, high-end web application that serves as a **Chinese Metaphysics Analysis Engine** (Zhou, BaZi, & Wuxing). This project combines ancient esoteric knowledge with a cinematic, data-driven "Abyssal/Oceanic" aesthetic and empirical physics-based logic reasoning.
+Xiu (宿) is an AI-powered Chinese Metaphysics Engine. It calculates and interprets BaZi (Four Pillars of Destiny), Wuxing (Five Elements), and Zodiac alignments using a polished, interactive celestial interface.
 
-## 🎯 Core Features
+## Features
 
-- **BaZi Pillar Extraction**: Automatically converts birth dates and times into precise 4-Pillar BaZi structures (calibrated by Winter Solstice/Dong Zhi).
-- **Matchmaking (Compatibility)**: Analyzes relationship dynamics based on Wuxing elemental interactions (Generative/Destructive cycles, Clashes, Harms).
-- **Daily Luck & Energy Prediction**: Evaluates daily elemental energies against user profiles to predict luck scores and potential Wuxing clashes.
-- **Physics-Based Reasoning**: Explains esoteric metaphysical interactions using scientific analogies (e.g., Thermal Shock, Kinetic Friction, Inersia).
-- **Cinematic "Abyssal" UI/UX**: Premium aesthetic featuring Three.js 3D ocean shaders, glassmorphism, interactive particles, and a dark "Vanguard" system motif.
+- **BaZi Destiny Chart**: Calculates the Four Pillars based on birth data and provides AI-driven personality insights.
+- **Daily Luck & Metaphysics Calendar**: Analyzes daily elemental energies to provide personalized luck scores and monthly favorable/unfavorable dates.
+- **Partner Compatibility**: Evaluates relationship dynamics based on elemental interactions and clashes.
+- **Xiu (宿) AI Astrologer**: Features an integrated chat system to ask deep, esoteric questions regarding destiny and elements.
+- **Interactive Celestial UI**: Utilizes 3D starry sky shaders, interactive zodiac grids, and glassmorphism for a premium desktop and mobile experience.
 
-## 🛠 Tech Stack
+## Tech Stack
 
-- **Frontend Framework**: Next.js v16 (App Router), React
-- **Styling & UI**: Tailwind CSS v4, Glassmorphism patterns
-- **3D & Animations**: Three.js, GSAP (ScrollTrigger)
-- **State Management**: Zustand (with TypeScript)
-- **Validation**: Zod (Type-safe schema validation)
-- **Backend & Auth**: Next.js API Routes, Iron-Session (Secure cookie-based auth)
-- **Database**: SQLite with Drizzle ORM
+- **Frontend**: Next.js (App Router), React, Tailwind CSS
+- **3D & Animation**: Three.js, GSAP, Framer Motion
+- **State Management**: Zustand
+- **Validation**: Zod, React Hook Form
+- **Backend**: Next.js API Routes, Iron-Session
+- **Database**: SQLite, Drizzle ORM
+- **AI Integration**: Google Gemini API
 
-## 📁 Project Structure
+## Setup and Installation
 
-- `/web` - The main Next.js application (Frontend & API). See [web/README.md](./web/README.md) for more details.
-- `/data` - Prototyping, prompts, and reference materials.
-- `/.agents/skills` - Installed AI Agent skills governing architecture and design standards.
+### 1. Prerequisites
+Ensure Node.js and `pnpm` are installed on your system.
 
-## 🚀 Getting Started
-
-Navigate to the `web` directory to start the application:
-
+### 2. Installation
+Navigate to the web directory and install the required dependencies:
 ```bash
 cd web
 pnpm install
+```
+
+### 3. Environment Variables
+Create a `.env.local` file in the `web` directory. Supply the required environment variables, including your Gemini API key and Iron-Session password.
+
+### 4. Database Setup
+Push the Drizzle schema to initialize the local SQLite database:
+```bash
+pnpm db:push
+```
+
+### 5. Running the Application
+Start the development server:
+```bash
 pnpm dev
 ```
+Open [http://localhost:3000](http://localhost:3000) to view the application.

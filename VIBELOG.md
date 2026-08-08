@@ -70,3 +70,45 @@ Response: Membangun komponen interaktif baru menggunakan `framer-motion` (awalny
 Response: Menginstal pustaka ikon `react-icons` untuk menggunakan set ikon *Game Icons (RPG style)* beresolusi tinggi guna menggantikan teks karakter, lantaran limitasi kuota pembuatan gambar AI. Ikon ini kemudian diberi warna pancaran elemen agar menyatu pekat dengan atmosfer estetik *glassmorphism* malam di *landing page*.
 - Prompt: gini aja buat 12 shio gambar shio saat satu shio di click dia akan seperti flip card depan gambar saat flip ada keterangan emosi dan sifat dari shio tersebut pake kayak bentukan mahyong dibagi menjadi 6 colloumn
 Response: Merombak sepenuhnya desain *Cosmic Wheel* melingkar menjadi rancangan matriks grid 6 kolom (`ZodiacGrid.tsx`). Mengubah wujud antarmuka menjadi kartu balok estetik *(Mahjong Tiles)* yang didukung animasi transisi 3D Flip 180 derajat yang mulus 60fps saat di-klik. Sisi depan menampilkan grafis shio, sementara sisi belakang kartu diintegrasikan dengan konteks data Bazi/Wuxing akurat yang merinci Energi, Karakter Sifat, dan Emosi Inti tiap zodiak.
+
+### DAY 3 - 08/08/2026
+Ringkasan percakapan: Pembuatan halaman BaZi Chart dan Artifacts, migrasi cache/histori ke SQLite, refactoring SoC, perbaikan bug respons AI, penyesuaian UI/UX komprehensif, audit copywriting, dan implementasi Technical SEO.
+
+- Prompt: Perbaiki error TypeScript 'Variants' pada LuckDisplay, terapkan prinsip SoC, dan tampilkan hasil luck tanpa animasi segel.
+Response: Memperbaiki konflik tipe Framer Motion, memisahkan logika presentasi dan data, serta menghapus state transisi.
+- Prompt: Lakukan perencanaan (PRD) untuk halaman BaZi Chart berdasarkan pedoman desain yang ada.
+Response: Menyusun Product Requirements Document (PRD) untuk fitur Four Pillars, keseimbangan elemen, dan ringkasan kepribadian.
+- Prompt: Integrasikan useBaziCalculator dengan sistem cache, gunakan Axios dan Zod safeParse alih-alih fetch.
+Response: Mengganti native fetch dengan Axios. Menambahkan skema validasi Zod untuk mencegah crash saat format API tidak sesuai.
+- Prompt: Sesuaikan ukuran UI komponen FourPillars untuk mobile dan sesuaikan lebar AIDisclaimer.
+Response: Memperbarui kelas Tailwind pada FourPillars dan AIDisclaimer agar responsif di layar kecil.
+- Prompt: Cek kenapa respons API chat/bazi sering terpotong dan sebabkan error.
+Response: Memperbaiki instruksi prompt.txt dan rute API untuk menangani respons AI yang terpotong dan mencegah kendala render komponen.
+- Prompt: Buat agar LuckDisplay mengambil data berdasarkan ID dan tanggal agar tidak tercampur antar akun.
+Response: Menambahkan pengecekan spesifik berdasarkan ID pengguna di LuckDisplay.tsx agar status keberuntungan hari ini terisolasi dengan benar.
+- Prompt: Ganti teks di ZodiacGrid dan ZodiacCircle ke bahasa Inggris dan pastikan datanya sinkron.
+Response: Menerjemahkan data statis zodiak (elemen, sifat, emosi) ke bahasa Inggris agar sejalan dengan arah copywriting utama.
+- Prompt: Pindahkan sistem caching BaZi dari localStorage ke database schema dan sinkronkan.
+Response: Membuang cache.ts, mendesain skema Drizzle untuk riwayat BaZi pengguna, dan membangun endpoint baru untuk menyimpan dan memuat kalkulasi dari DB.
+- Prompt: Lakukan perencanaan (PRD) dan implementasi untuk halaman Artifacts (Calendar, Notes, Insight Cards).
+Response: Merancang PRD, lalu membangun antarmuka interaktif yang mencakup kalender keberuntungan bulanan, panel catatan harian, dan 6 kartu wawasan metafisika (Asmara, Karir, dsb).
+- Prompt: Gunakan axios interceptor alih-alih fetch, jadikan InsightCard sebagai flip card, terapkan react-hook-form dan zod, serta gunakan konsep SoC.
+Response: Mengimplementasikan form validation kokoh, merombak InsightCard menjadi kartu 3D yang bisa dibalik (flip), memecah halaman Artifacts agar komponennya tidak menjadi raksasa, dan mengatur base URL Axios ke `/api`.
+- Prompt: Lakukan audit copywriting menggunakan pedoman stop-slop dan selaraskan teks ke bahasa Inggris.
+Response: Mengoreksi metadata web dan instruksi prompt Xiu (宿). Menghapus frasa filler khas AI.
+- Prompt: Tambahkan input nama lengkap pada form kecocokan pasangan dan buat waktu lahirnya opsional.
+Response: Menambahkan field nama untuk identifikasi relasi dan menghapus validasi wajib pada kolom waktu lahir di PartnerCompatibilityForm.
+- Prompt: Perbaiki overflow InsightCard, background ArtifactCalendar, hilangkan scrollbar browser, dan buat scrollbar transparan estetik.
+Response: Memperbaiki CSS InsightCard dan ArtifactCalendar, serta menyuntikkan utilitas global untuk scrollbar webkit yang tembus pandang.
+- Prompt: Buat state aktif pada NavbarClient saat pengguna berada di halaman tersebut.
+Response: Menambahkan deteksi URL di NavbarClient untuk menyorot ikon menu yang sedang aktif.
+- Prompt: Buat database khusus untuk useChatStore menggantikan localStorage.
+Response: Membuat tabel riwayat chat di Drizzle, menyusun API CRUD, dan mengikatnya secara optimistis ke useChatStore/useChatManager.
+- Prompt: Sesuaikan prompt.txt agar AI membalas sapaan, dan hanya memblokir pertanyaan di luar topik (OOT).
+Response: Meringankan batasan moderasi Xiu (宿) agar tetap ramah pada sapaan tanpa melanggar batasan keilmuan.
+- Prompt: Cegah respons server invalid pada endpoint chat saat AI salah format.
+Response: Menyelesaikan konflik ID di DB dan menambahkan perlindungan ekstrak Regex JSON pada route chat.
+- Prompt: Tambahkan tombol retry dan copy pada ui/chat-message.tsx.
+Response: Menambahkan tombol Copy untuk semua peran dan tombol Retry untuk regenerate teks dari Assistant.
+- Prompt: Lakukan audit SEO penuh berdasarkan pedoman claude-seo.
+Response: Mengimplementasikan SEO Teknis (robots.ts, sitemap.ts, JSON-LD Schema, OpenGraph, Security Headers, pemblokiran indeks halaman privat).

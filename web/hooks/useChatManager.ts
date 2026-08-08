@@ -10,7 +10,8 @@ export function useChatManager() {
     createSession, 
     switchSession, 
     deleteSession, 
-    addMessage 
+    addMessage,
+    fetchSessions
   } = useChatStore();
 
   const [input, setInput] = useState('');
@@ -43,6 +44,16 @@ export function useChatManager() {
     // Only auto-scroll if we haven't loaded older messages, or if it's a brand new message
     scrollToBottom();
   }, [messages.length, isLoading]);
+
+  // Initial fetch
+  useEffect(() => {
+    let mounted = true;
+    if (mounted) {
+      fetchSessions();
+    }
+    return () => { mounted = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
@@ -93,7 +104,7 @@ export function useChatManager() {
 
       const historyCtx = currentMessages.slice(-5).map(m => ({ role: m.role, content: m.content }));
       
-      const res = await api.post('/api/chat', {
+      const res = await api.post('/chat', {
         message: userText,
         history: historyCtx
       });
@@ -107,9 +118,51 @@ export function useChatManager() {
       });
     } catch (error: unknown) {
       console.error(error);
-      const errorMsg = (error as Error).message || 'Gagal terhubung ke Celestial Engine.';
+      const errorMsg = (error as Error).message || 'Failed to connect to the Celestial Engine.';
       
       addMessage(targetSessionId, {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: `System Error: ${errorMsg}`
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRetry = async () => {
+    if (!activeSessionId || isLoading) return;
+
+    const lastUserMsg = messages.filter(m => m.role === 'user').pop();
+    if (!lastUserMsg) return;
+
+    setIsLoading(true);
+
+    try {
+      const currentMessages = sessions.find(s => s.id === activeSessionId)?.messages || [INITIAL_MESSAGE, lastUserMsg];
+      
+      // Get context up to the last user message (ignore trailing errors from assistant)
+      const userIndex = currentMessages.lastIndexOf(lastUserMsg);
+      const historyToUse = currentMessages.slice(0, userIndex + 1);
+      const historyCtx = historyToUse.slice(-5).map(m => ({ role: m.role, content: m.content }));
+      
+      const res = await api.post('/chat', {
+        message: lastUserMsg.content,
+        history: historyCtx
+      });
+
+      const reply = extractReplyFromResponse(res.data);
+
+      addMessage(activeSessionId, {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: reply
+      });
+    } catch (error: unknown) {
+      console.error(error);
+      const errorMsg = (error as Error).message || 'Failed to connect to the Celestial Engine.';
+      
+      addMessage(activeSessionId, {
         id: Date.now().toString(),
         role: 'assistant',
         content: `System Error: ${errorMsg}`
@@ -138,7 +191,8 @@ export function useChatManager() {
       deleteSession,
       handleScroll,
       handleNewChat,
-      handleSubmit
+      handleSubmit,
+      handleRetry
     }
   };
 }

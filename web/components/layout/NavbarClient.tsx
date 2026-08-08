@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useUserStore } from '@/stores/useUserStore';
+import { useChatStore } from '@/stores/useChatStore';
 
 const NAV_ITEMS = [
-  { href: '/#bazi', label: 'BaZi 四柱', isPrivate: false },
-  { href: '/#wuxing', label: 'Wuxing 五行', isPrivate: false },
-  { href: '/#xiu', label: '28 Xiu 二十八宿', isPrivate: false },
+  { href: '/', label: 'Home Page 首页', isPrivate: false },
+  { href: '/bazi', label: 'BaZi Chart 八字', isPrivate: false },
   { href: '/dashboard', label: 'Today\'s Luck 運勢', isPrivate: true },
   { href: '/chat', label: 'Chat 聊天', isPrivate: true },
+  { href: '/artifacts', label: 'Artifacts 文物', isPrivate: true },
 ];
 
 export default function NavbarClient({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
@@ -70,10 +71,12 @@ export default function NavbarClient({ isLoggedIn = false }: { isLoggedIn?: bool
   };
 
   const logout = useUserStore(state => state.logout);
+  const clearChatSessions = useChatStore(state => state.clearSessions);
 
   const handleLogout = async () => {
     try {
       await logout();
+      clearChatSessions();
       setIsOpen(false);
       setIsProfileOpen(false);
       router.push('/login');
@@ -88,26 +91,30 @@ export default function NavbarClient({ isLoggedIn = false }: { isLoggedIn?: bool
       <Link href="/" className="flex items-center gap-3 decoration-transparent">
         <span className="chinese-font text-blue-400 font-bold text-xl drop-shadow-md">星宿</span>
         <span className="serif text-xl tracking-widest font-bold uppercase border-l border-white/20 pl-3 drop-shadow-md text-white">
-          Aetheria Celestial
+          Xiu (宿) Celestial
         </span>
       </Link>
 
       <ul className={`nav-links${isOpen ? ' open' : ''}`}>
-        {NAV_ITEMS.filter(item => !item.isPrivate || isLoggedIn).map(({ href, label }) => (
-          <li key={href}>
-            <Link
-              href={href}
-              onClick={(e) => handleNavClick(e, href)}
-            >
-              {label}
-            </Link>
-          </li>
-        ))}
+        {NAV_ITEMS.filter(item => !item.isPrivate || isLoggedIn).map(({ href, label }) => {
+          const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+          return (
+            <li key={href}>
+              <Link
+                href={href}
+                className={isActive ? 'active' : ''}
+                onClick={(e) => handleNavClick(e, href)}
+              >
+                {label}
+              </Link>
+            </li>
+          );
+        })}
 
         {/* Mobile-only CTA inside menu */}
         <li className="block lg:hidden mt-4">
           {!isLoggedIn ? (
-            <Link href="/login" className="nav-cta" onClick={() => setIsOpen(false)}>
+            <Link href="/bazi" className="nav-cta" onClick={() => setIsOpen(false)}>
               Calculate BaZi Chart
             </Link>
           ) : (
@@ -124,7 +131,7 @@ export default function NavbarClient({ isLoggedIn = false }: { isLoggedIn?: bool
       </ul>
 
       {!isLoggedIn ? (
-        <Link href="/login" className="nav-cta nav-cta-desktop hidden lg:inline-flex">
+        <Link href="/bazi" className="nav-cta nav-cta-desktop hidden lg:inline-flex">
           Calculate BaZi Chart
         </Link>
       ) : (

@@ -29,20 +29,20 @@ export const useUserStore = create<UserStore>()(
     setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
     setLoading: (isLoading) => set({ isLoading }),
     login: async (data) => {
-      const { data: result } = await api.post('/api/auth/login', data);
+      const { data: result } = await api.post('/auth/login', data);
       set({ user: result.user, isAuthenticated: true });
     },
     register: async (data) => {
-      const { data: result } = await api.post('/api/auth/register', data);
+      const { data: result } = await api.post('/auth/register', data);
       set({ user: result.user, isAuthenticated: true });
     },
     updateProfile: async (data) => {
-      const { data: result } = await api.put('/api/user', data);
+      const { data: result } = await api.put('/user', data);
       set({ user: result.user, isAuthenticated: true });
     },
     logout: async () => {
       try {
-        await api.post('/api/auth/logout');
+        await api.post('/auth/logout');
       } finally {
         set({ user: null, isAuthenticated: false });
         if (typeof window !== 'undefined') {
@@ -53,7 +53,7 @@ export const useUserStore = create<UserStore>()(
     refreshProfile: async () => {
       set({ isLoading: true });
       try {
-        const { data } = await api.get('/api/me');
+        const { data } = await api.get('/me');
         if (data.user) {
           set({ user: data.user, isAuthenticated: true, isLoading: false });
         } else {

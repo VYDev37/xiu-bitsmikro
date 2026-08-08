@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1786176708131,
+      "tag": "0000_superb_master_mold",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786179814073,
+      "tag": "0001_giant_shinobi_shaw",
+      "breakpoints": true
+    }
+  ]
+}

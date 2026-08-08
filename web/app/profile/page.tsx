@@ -3,8 +3,9 @@ import SpotlightCard from '@/components/ui/SpotlightCard';
 import ProfileClient from './ProfileClient';
 
 export const metadata: Metadata = {
-  title: "My Profile | Aetheria Celestial",
-  description: "Update your BaZi data to calculate your destiny accurately.",
+  title: "Xiu (宿) Celestial | Profile",
+  description: "Update your BaZi profile data.",
+  robots: { index: false, follow: false }
 };
 
 export default function ProfilePage() {
