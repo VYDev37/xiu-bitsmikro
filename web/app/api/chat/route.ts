@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       contextStr = "Previous Conversation:\n" + history.map((msg: { role: string; content: string }) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") + "\n\n";
     }
 
-    const dynamicQuestion = `${contextStr}User's New Question: ${message}\n\n[SISTEM GUARDRAIL: Jika pertanyaan ini sama sekali tidak berhubungan dengan BaZi, Wuxing, Shio, Fengshui, atau Metafisika Tiongkok, TOLAK DENGAN SOPAN. Anda TIDAK BOLEH menjawab hal teknis, politik, resep, coding, dsb. Isi dynamic_question_answer dengan penolakan.]`;
+    const dynamicQuestion = `${contextStr}User's New Question: ${message}\n\n[SYSTEM GUARDRAIL: Reject out-of-scope questions politely. Do not answer technical, political, recipe, or coding queries. Populate dynamic_question_answer with your refusal.]`;
 
     const payload = {
       action: "ASK_ANY",
@@ -66,6 +66,7 @@ export async function POST(request: Request) {
       config: {
         systemInstruction: `${systemPrompt}\n\nPlease respond strictly in valid JSON format according to the ASK_ANY action structure. Provide the response as a single JSON object without any Markdown formatting (no \`\`\`json blocks).`,
         responseMimeType: 'application/json',
+        maxOutputTokens: 8192,
       }
     });
 
@@ -74,12 +75,23 @@ export async function POST(request: Request) {
     // Robustly extract JSON object by finding the first '{' and last '}'
     const startIdx = resultText.indexOf('{');
     const endIdx = resultText.lastIndexOf('}');
-    
+
     if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
       resultText = resultText.substring(startIdx, endIdx + 1);
     }
 
-    const parsed = JSON.parse(resultText);
+    let parsed;
+    try {
+      parsed = JSON.parse(resultText);
+    } catch (parseError) {
+      console.warn("Failed to parse AI response as JSON:", resultText);
+      // Fallback to prevent server from throwing 500 and causing invalid response
+      parsed = {
+        action: "ASK_ANY",
+        status: "SUCCESS",
+        dynamic_question_answer: "Sorry but the server has problem when trying to process your message. Please try again."
+      };
+    }
 
     return NextResponse.json(parsed);
   } catch (error: unknown) {

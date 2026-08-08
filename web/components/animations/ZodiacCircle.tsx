@@ -5,18 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GiMouse, GiBullHorns, GiTigerHead, GiRabbit, GiDragonHead, GiSnake, GiHorseHead, GiGoat, GiMonkey, GiRooster, GiSittingDog, GiPig } from 'react-icons/gi';
 
 const zodiacs = [
-  { id: 1, name: 'Tikus', char: '子', element: 'Water', color: 'text-blue-400', glow: 'shadow-[0_0_25px_rgba(96,165,250,0.8)]', border: 'border-blue-500/50', bg: 'bg-blue-900/40', Icon: GiMouse },
-  { id: 2, name: 'Kerbau', char: '丑', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiBullHorns },
-  { id: 3, name: 'Macan', char: '寅', element: 'Wood', color: 'text-emerald-400', glow: 'shadow-[0_0_25px_rgba(52,211,153,0.8)]', border: 'border-emerald-500/50', bg: 'bg-emerald-900/40', Icon: GiTigerHead },
-  { id: 4, name: 'Kelinci', char: '卯', element: 'Wood', color: 'text-emerald-400', glow: 'shadow-[0_0_25px_rgba(52,211,153,0.8)]', border: 'border-emerald-500/50', bg: 'bg-emerald-900/40', Icon: GiRabbit },
-  { id: 5, name: 'Naga', char: '辰', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiDragonHead },
-  { id: 6, name: 'Ular', char: '巳', element: 'Fire', color: 'text-rose-400', glow: 'shadow-[0_0_25px_rgba(251,113,133,0.8)]', border: 'border-rose-500/50', bg: 'bg-rose-900/40', Icon: GiSnake },
-  { id: 7, name: 'Kuda', char: '午', element: 'Fire', color: 'text-rose-400', glow: 'shadow-[0_0_25px_rgba(251,113,133,0.8)]', border: 'border-rose-500/50', bg: 'bg-rose-900/40', Icon: GiHorseHead },
-  { id: 8, name: 'Kambing', char: '未', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiGoat },
-  { id: 9, name: 'Monyet', char: '申', element: 'Metal', color: 'text-slate-200', glow: 'shadow-[0_0_25px_rgba(226,232,240,0.8)]', border: 'border-slate-300/50', bg: 'bg-slate-700/40', Icon: GiMonkey },
-  { id: 10, name: 'Ayam', char: '酉', element: 'Metal', color: 'text-slate-200', glow: 'shadow-[0_0_25px_rgba(226,232,240,0.8)]', border: 'border-slate-300/50', bg: 'bg-slate-700/40', Icon: GiRooster },
-  { id: 11, name: 'Anjing', char: '戌', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiSittingDog },
-  { id: 12, name: 'Babi', char: '亥', element: 'Water', color: 'text-blue-400', glow: 'shadow-[0_0_25px_rgba(96,165,250,0.8)]', border: 'border-blue-500/50', bg: 'bg-blue-900/40', Icon: GiPig },
+  { id: 1, name: 'Rat', char: '子', element: 'Water', color: 'text-blue-400', glow: 'shadow-[0_0_25px_rgba(96,165,250,0.8)]', border: 'border-blue-500/50', bg: 'bg-blue-900/40', Icon: GiMouse },
+  { id: 2, name: 'Ox', char: '丑', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiBullHorns },
+  { id: 3, name: 'Tiger', char: '寅', element: 'Wood', color: 'text-emerald-400', glow: 'shadow-[0_0_25px_rgba(52,211,153,0.8)]', border: 'border-emerald-500/50', bg: 'bg-emerald-900/40', Icon: GiTigerHead },
+  { id: 4, name: 'Rabbit', char: '卯', element: 'Wood', color: 'text-emerald-400', glow: 'shadow-[0_0_25px_rgba(52,211,153,0.8)]', border: 'border-emerald-500/50', bg: 'bg-emerald-900/40', Icon: GiRabbit },
+  { id: 5, name: 'Dragon', char: '辰', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiDragonHead },
+  { id: 6, name: 'Snake', char: '巳', element: 'Fire', color: 'text-rose-400', glow: 'shadow-[0_0_25px_rgba(251,113,133,0.8)]', border: 'border-rose-500/50', bg: 'bg-rose-900/40', Icon: GiSnake },
+  { id: 7, name: 'Horse', char: '午', element: 'Fire', color: 'text-rose-400', glow: 'shadow-[0_0_25px_rgba(251,113,133,0.8)]', border: 'border-rose-500/50', bg: 'bg-rose-900/40', Icon: GiHorseHead },
+  { id: 8, name: 'Goat', char: '未', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiGoat },
+  { id: 9, name: 'Monkey', char: '申', element: 'Metal', color: 'text-slate-200', glow: 'shadow-[0_0_25px_rgba(226,232,240,0.8)]', border: 'border-slate-300/50', bg: 'bg-slate-700/40', Icon: GiMonkey },
+  { id: 10, name: 'Rooster', char: '酉', element: 'Metal', color: 'text-slate-200', glow: 'shadow-[0_0_25px_rgba(226,232,240,0.8)]', border: 'border-slate-300/50', bg: 'bg-slate-700/40', Icon: GiRooster },
+  { id: 11, name: 'Dog', char: '戌', element: 'Earth', color: 'text-amber-400', glow: 'shadow-[0_0_25px_rgba(251,191,36,0.8)]', border: 'border-amber-500/50', bg: 'bg-amber-900/40', Icon: GiSittingDog },
+  { id: 12, name: 'Pig', char: '亥', element: 'Water', color: 'text-blue-400', glow: 'shadow-[0_0_25px_rgba(96,165,250,0.8)]', border: 'border-blue-500/50', bg: 'bg-blue-900/40', Icon: GiPig },
 ];
 
 const WoodParticles = () => (

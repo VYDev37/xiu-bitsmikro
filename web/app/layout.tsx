@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, Cinzel, Noto_Serif_SC, Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
@@ -25,9 +25,36 @@ const notoSc = Noto_Serif_SC({
   preload: false,
 });
 
+export const viewport: Viewport = {
+  themeColor: "#020617",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "Aetheria Celestial | BaZi AI Viewer",
-  description: "Celestial Engine for BaZi, Wuxing & 28 Xiu Mansions",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://xiu.celestial'),
+  title: {
+    default: "Xiu (宿) Celestial | BaZi AI Engine",
+    template: "%s | Xiu (宿) Celestial"
+  },
+  description: "Advanced AI Celestial Engine for BaZi, Wuxing & 28 Xiu Mansions Analysis",
+  keywords: ["bazi", "four pillars of destiny", "wuxing", "chinese astrology", "ai astrology", "28 mansions"],
+  authors: [{ name: "Xiu (宿) Team" }],
+  creator: "Xiu (宿)",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    title: "Xiu (宿) Celestial | BaZi AI Engine",
+    description: "Advanced AI Celestial Engine for BaZi, Wuxing & 28 Xiu Mansions Analysis",
+    siteName: "Xiu (宿) Celestial",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Xiu (宿) Celestial | BaZi AI Engine",
+    description: "Advanced AI Celestial Engine for BaZi, Wuxing & 28 Xiu Mansions Analysis",
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

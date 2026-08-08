@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 // Create a custom Axios instance
 const api = axios.create({
-  baseURL: '/',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -33,7 +33,7 @@ api.interceptors.response.use(
         
         // Only destroy session and redirect if we aren't already on an auth page
         if (!isAuthPage) {
-          fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
+          api.post('/auth/logout').finally(() => {
             window.location.href = '/login';
           });
           // Return a pending promise so the calling code doesn't proceed with the error while redirecting

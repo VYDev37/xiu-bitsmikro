@@ -23,7 +23,7 @@ export function extractReplyFromResponse(rawData: unknown): string {
     if (typeof rawData === 'object' && rawData !== null && 'error' in (rawData as Record<string, unknown>)) {
       return `Error: ${(rawData as Record<string, unknown>).error}`;
     }
-    return "Maaf, respon dari server tidak dapat diproses (Invalid format).";
+    return "Server response invalid (Format error).";
   }
 
   const data = result.data;
@@ -35,7 +35,7 @@ export function extractReplyFromResponse(rawData: unknown): string {
     return data.message;
   }
 
-  let reply = "Maaf, saya tidak dapat merumuskan jawaban saat ini.";
+  let reply = "I cannot formulate an answer right now.";
 
   if (data.dynamic_question_answer) {
     reply = data.dynamic_question_answer;

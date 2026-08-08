@@ -4,8 +4,9 @@ import ChatClient from './ChatClient';
 import StarrySkyCanvas from '@/components/animations/StarrySkyCanvas';
 
 export const metadata = {
-  title: 'Celestial Engine Chat - Aetheria',
-  description: 'Ask any question to the BaZi AI celestial engine.',
+  title: 'Xiu (宿) Celestial | Chat',
+  description: 'Query the BaZi AI celestial engine.',
+  robots: { index: false, follow: false }
 };
 
 export default async function ChatPage() {

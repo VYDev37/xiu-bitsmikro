@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle, MessageSquare, Trash2, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useChatManager } from '@/hooks/useChatManager';
+import { AIDisclaimer } from '@/components/ui/AIDisclaimer';
 
 export default function ChatClient() {
   const { state, actions } = useChatManager();
-  
+
   const {
     sessions,
     activeSessionId,
@@ -29,15 +30,16 @@ export default function ChatClient() {
     deleteSession,
     handleScroll,
     handleNewChat,
-    handleSubmit
+    handleSubmit,
+    handleRetry
   } = actions;
 
   return (
     <div className="flex h-full w-full relative z-10 overflow-hidden">
-      
+
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -49,7 +51,7 @@ export default function ChatClient() {
         isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       )}>
         {/* Mobile close button */}
-        <button 
+        <button
           onClick={() => setIsSidebarOpen(false)}
           className="absolute top-4 right-4 md:hidden text-slate-400 hover:text-white"
         >
@@ -57,7 +59,7 @@ export default function ChatClient() {
         </button>
 
         <div className="p-4">
-          <Button 
+          <Button
             onClick={handleNewChat}
             className="w-full flex items-center justify-start gap-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/20 rounded-xl transition-all"
           >
@@ -65,16 +67,16 @@ export default function ChatClient() {
             <span>New Reading</span>
           </Button>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto px-2 custom-scrollbar">
           <div className="text-xs font-mono text-slate-500 mb-3 px-3 uppercase tracking-wider">Recent Sessions</div>
           {sessions.map(session => (
-            <div 
+            <div
               key={session.id}
               className={cn(
                 "group flex items-center justify-between px-3 py-3 rounded-xl mb-1 cursor-pointer transition-all",
-                session.id === activeSessionId 
-                  ? "bg-white/10 text-blue-200" 
+                session.id === activeSessionId
+                  ? "bg-white/10 text-blue-200"
                   : "hover:bg-white/5 text-slate-400 hover:text-slate-200"
               )}
               onClick={() => {
@@ -86,7 +88,7 @@ export default function ChatClient() {
                 <MessageSquare size={16} className={session.id === activeSessionId ? "text-blue-400" : "opacity-70"} />
                 <span className="truncate text-sm font-medium">{session.title}</span>
               </div>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteSession(session.id);
@@ -102,10 +104,10 @@ export default function ChatClient() {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col h-full min-w-0 bg-transparent relative pt-16 md:pt-0">
-        
+
         {/* Mobile Header (Hamburger) */}
         <div className="absolute top-0 left-0 right-0 h-16 flex items-center px-4 md:hidden z-30 bg-gradient-to-b from-[#030712] to-transparent">
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 -ml-2 text-blue-300 hover:bg-white/5 rounded-lg"
           >
@@ -115,7 +117,7 @@ export default function ChatClient() {
         </div>
 
         {/* Chat Messages */}
-        <div 
+        <div
           className="flex-1 overflow-y-auto px-4 sm:px-8 pb-2 custom-scrollbar flex flex-col"
           onScroll={handleScroll}
         >
@@ -130,9 +132,21 @@ export default function ChatClient() {
                 </span>
               </div>
             )}
-            {visibleMessages.map((msg) => (
-              <ChatMessage key={msg.id} role={msg.role} content={msg.content} />
-            ))}
+            {visibleMessages.map((msg, index) => {
+              const isLast = index === visibleMessages.length - 1;
+              const isAssistant = msg.role === 'assistant';
+              const showRetry = isLast && isAssistant && !isLoading;
+              
+              return (
+                <ChatMessage 
+                  key={msg.id} 
+                  role={msg.role} 
+                  content={msg.content} 
+                  showRetry={showRetry}
+                  onRetry={handleRetry}
+                />
+              );
+            })}
             {isLoading && (
               <div className="flex w-full mb-6 justify-start">
                 <div className="bg-white/[0.03] border border-white/10 text-slate-400 rounded-2xl rounded-tl-none px-5 py-4 flex items-center gap-2 shadow-lg backdrop-blur-sm">
@@ -154,7 +168,7 @@ export default function ChatClient() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading}
-                placeholder="Tanya soal nasib, BaZi, shio, elemen..."
+                placeholder="Ask about shio, element, destiny..."
                 className="w-full h-14 bg-[#020617]/80 border-white/10 text-white rounded-2xl pl-5 pr-14 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 backdrop-blur-xl shadow-lg"
               />
               <Button
@@ -168,8 +182,8 @@ export default function ChatClient() {
                 </svg>
               </Button>
             </form>
-            <div className="text-center mt-3 text-[10px] sm:text-xs text-slate-500 font-mono">
-              Celestial Engine may occasionally produce unconventional metaphors. AI readings are for insight and reflection.
+            <div className="mt-4">
+              <AIDisclaimer />
             </div>
           </div>
         </div>
