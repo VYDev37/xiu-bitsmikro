@@ -23,8 +23,8 @@ export async function POST(request: Request) {
 
     const passwordHash = await argon2.hash(password, {
       type: argon2.argon2id,
-      memoryCost: 16384,
-      timeCost: 2,
+      memoryCost: 65536,
+      timeCost: 3,
       parallelism: 1
     });
 
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
       } 
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Register Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

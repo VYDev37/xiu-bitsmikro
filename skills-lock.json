@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "007": {
+      "source": "sickn33/agentic-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/007/SKILL.md",
+      "computedHash": "07b9bab38c77b5da9e0ab07e00676d020665a53d1213f737214b1217606a3107"
+    },
     "react-nextjs-development": {
       "source": "sickn33/antigravity-awesome-skills",
       "sourceType": "github",
