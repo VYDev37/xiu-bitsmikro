@@ -4,9 +4,12 @@ This directory contains the core Next.js application for Xiu (宿), the AI-power
 
 ## Features Overview
 
-- **Interactive Metaphysics Dashboard**: Visualizes BaZi pillars, elemental balances, and zodiac signs using 3D flipping cards and interactive canvases.
-- **AI-Powered Insights**: Integrates with LLMs to generate daily luck readings, partner compatibility scores, and personalized monthly calendars.
-- **Persistent Chat Interface**: Connects users to the Xiu (宿) AI for esoteric consultations, with conversations securely stored in a local SQLite database.
+- **Interactive Metaphysics Dashboard**: Calculate BaZi pillars, read elemental balances, and explore zodiac signs via 3D flipping cards.
+- **AI-Powered Insights**: Receive daily luck readings, check partner compatibility scores, and view personalized monthly calendars.
+- **Persistent Chat Interface**: Ask esoteric questions to the Xiu (宿) AI astrologer and review your consultation history.
+- **Cosmic Zodiac Matrix**: Uncover elemental energy, character traits, and emotions for the 12 Chinese zodiacs using Mahjong-style tiles.
+- **Personal Artifacts**: Store daily notes and track life insights like romance and career on interactive cards.
+- **Interactive Celestial UI**: Navigate a vivid 3D starry sky featuring the 28 Xiu Mansions (二十八宿).
 
 ## Tech Stack
 

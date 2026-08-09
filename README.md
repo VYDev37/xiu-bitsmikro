@@ -4,11 +4,13 @@ Xiu (宿) is an AI-powered Chinese Metaphysics Engine. It calculates and interpr
 
 ## Features
 
-- **BaZi Destiny Chart**: Calculates the Four Pillars based on birth data and provides AI-driven personality insights.
-- **Daily Luck & Metaphysics Calendar**: Analyzes daily elemental energies to provide personalized luck scores and monthly favorable/unfavorable dates.
-- **Partner Compatibility**: Evaluates relationship dynamics based on elemental interactions and clashes.
-- **Xiu (宿) AI Astrologer**: Features an integrated chat system to ask deep, esoteric questions regarding destiny and elements.
-- **Interactive Celestial UI**: Utilizes 3D starry sky shaders, interactive zodiac grids, and glassmorphism for a premium desktop and mobile experience.
+- **BaZi Destiny Chart**: Calculate Four Pillars from birth data and read AI-driven personality insights.
+- **Daily Luck & Metaphysics Calendar**: Track daily elemental energies, monitor luck scores, and pinpoint favorable dates.
+- **Partner Compatibility**: Evaluate relationship dynamics through elemental interactions and clashes.
+- **Xiu (宿) AI Astrologer**: Ask esoteric questions about destiny and elements via the integrated chat system.
+- **Cosmic Zodiac Matrix**: Explore the 12 Chinese zodiacs using Mahjong-style flip tiles to uncover elemental energy, traits, and emotions.
+- **Personal Artifacts**: Write daily notes and read specific life insights—like romance and career—on interactive 3D cards.
+- **Interactive Celestial UI**: Navigate a 3D starry sky featuring the 28 Xiu Mansions (二十八宿) and crisp glassmorphism layouts.
 
 ## Tech Stack
 
