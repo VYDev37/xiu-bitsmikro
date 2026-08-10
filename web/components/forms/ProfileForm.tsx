@@ -126,7 +126,7 @@ export default function ProfileForm({ initialUser }: { initialUser: UserData }) 
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 h-12 bg-blue-500/20 text-blue-100 hover:bg-blue-500/40 border border-blue-400/30 rounded-full font-semibold uppercase tracking-widest text-xs transition-all shadow-[0_0_15px_rgba(56,189,248,0.15)] hover:shadow-[0_0_25px_rgba(56,189,248,0.3)]"
+            className="flex-1 p-4 h-12 bg-blue-500/20 text-blue-100 hover:bg-blue-500/40 border border-blue-400/30 rounded-full font-semibold uppercase tracking-widest text-xs transition-all shadow-[0_0_15px_rgba(56,189,248,0.15)] hover:shadow-[0_0_25px_rgba(56,189,248,0.3)]"
           >
             {isSubmitting ? 'Saving...' : 'Update Profile'}
           </Button>
@@ -134,7 +134,7 @@ export default function ProfileForm({ initialUser }: { initialUser: UserData }) 
             type="button"
             variant="outline"
             onClick={handleLogout}
-            className="sm:flex-none h-12 bg-white/5 border-white/10 text-slate-300 hover:bg-rose-500/10 hover:text-rose-200 hover:border-slate-500/30 rounded-full font-semibold uppercase tracking-widest text-xs transition-all"
+            className="sm:flex-none p-2 h-12 bg-white/5 border-white/10 text-slate-300 hover:bg-rose-500/10 hover:text-rose-200 hover:border-slate-500/30 rounded-full font-semibold uppercase tracking-widest text-xs transition-all"
           >
             Logout
           </Button>

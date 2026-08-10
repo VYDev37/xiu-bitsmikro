@@ -26,6 +26,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
+    if (message.length > 500) {
+      return NextResponse.json({ error: 'Message is too long. Maximum 500 characters allowed.' }, { status: 400 });
+    }
+
     const today = new Date().toISOString().split('T')[0];
 
     let systemPrompt = '';

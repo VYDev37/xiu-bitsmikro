@@ -18,12 +18,12 @@ export async function proxy(request: NextRequest) {
     return res;
   }
 
-  // Untuk guest (atau invalid token), allow /, /login, /register, /dashboard, dan /api/*
+  // Untuk guest (atau invalid token), allow /, /login, /register, dan /api/auth/*
   const isGuestAllowed =
     pathname === '/' ||
     pathname === '/login' ||
     pathname === '/register' ||
-    pathname.startsWith('/api/');
+    pathname.startsWith('/api/auth/');
 
   if (!isValidSession && !isGuestAllowed) {
     return NextResponse.redirect(new URL('/login', request.url));
