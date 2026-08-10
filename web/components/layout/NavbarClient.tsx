@@ -88,7 +88,7 @@ export default function NavbarClient({ isLoggedIn = false }: { isLoggedIn?: bool
 
   return (
     <nav className={`nav${scrolled ? ' scrolled' : ''}${isOpen ? ' menu-open' : ''}`}>
-      <Link href="/" className="flex items-center gap-3 decoration-transparent">
+      <Link href="/" className="flex items-center gap-3 decoration-transparent relative z-[1001]">
         <span className="chinese-font text-blue-400 font-bold text-xl drop-shadow-md">星宿</span>
         <span className="serif text-xl tracking-widest font-bold uppercase border-l border-white/20 pl-3 drop-shadow-md text-white">
           Xiu (宿) Celestial
