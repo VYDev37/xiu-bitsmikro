@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const user = db.select().from(users).where(eq(users.id, session.userId)).get();
+  const [user] = await db.select().from(users).where(eq(users.id, session.userId)).limit(1);
   if (!user) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
@@ -35,11 +35,11 @@ export async function PUT(request: Request) {
   try {
     const { name, birthDate, birthTime } = await request.json();
     
-    const updated = db.update(users).set({
+    const [updated] = await db.update(users).set({
       name,
       birthDate: birthDate || null,
       birthTime: birthTime || null
-    }).where(eq(users.id, session.userId)).returning().get();
+    }).where(eq(users.id, session.userId)).returning();
 
     return NextResponse.json({ success: true, user: {
       id: updated.id,

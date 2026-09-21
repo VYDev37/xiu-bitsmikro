@@ -13,13 +13,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'nama and birthDate are required' }, { status: 400 });
     }
 
-    const saved = db.select()
+    const saved = await db.select()
       .from(savedDates)
       .where(and(
         eq(savedDates.nama, nama),
         eq(savedDates.birthDate, birthDate)
-      ))
-      .all();
+      ));
 
     return NextResponse.json(saved);
   } catch (error: unknown) {
@@ -39,25 +38,25 @@ export async function POST(req: Request) {
     }
 
     // Check if already saved
-    const existing = db.select()
+    const [existing] = await db.select()
       .from(savedDates)
       .where(and(
         eq(savedDates.nama, nama),
         eq(savedDates.birthDate, birthDate),
         eq(savedDates.date, date)
       ))
-      .get();
+      .limit(1);
 
     if (existing) {
       return NextResponse.json({ message: 'Date already saved', id: existing.id });
     }
 
-    const result = db.insert(savedDates).values({
+    const [result] = await db.insert(savedDates).values({
       nama,
       birthDate,
       date,
       data: typeof data === 'string' ? data : JSON.stringify(data)
-    }).returning().get();
+    }).returning();
 
     return NextResponse.json({ message: 'Date saved successfully', id: result.id });
   } catch (error: unknown) {
@@ -76,7 +75,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'id is required' }, { status: 400 });
     }
 
-    db.delete(savedDates).where(eq(savedDates.id, parseInt(id))).run();
+    await db.delete(savedDates).where(eq(savedDates.id, parseInt(id)));
 
     return NextResponse.json({ message: 'Saved date deleted successfully' });
   } catch (error: unknown) {

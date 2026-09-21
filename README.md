@@ -19,7 +19,7 @@ Xiu (宿) is an AI-powered Chinese Metaphysics Engine. It calculates and interpr
 - **State Management**: Zustand
 - **Validation**: Zod, React Hook Form
 - **Backend**: Next.js API Routes, Iron-Session
-- **Database**: SQLite, Drizzle ORM
+- **Database**: PostgreSQL, Drizzle ORM (postgres.js)
 - **AI Integration**: Google Gemini API
 
 ## Setup and Installation
@@ -35,12 +35,16 @@ pnpm install
 ```
 
 ### 3. Environment Variables
-Create a `.env.local` file in the `web` directory. Supply the required environment variables, including your Gemini API key and Iron-Session password.
+Create a `.env.local` file in the `web` directory. Supply the required environment variables, including `DATABASE_URL` (PostgreSQL connection string), Gemini API key, and Iron-Session password.
 
 ### 4. Database Setup
-Push the Drizzle schema to initialize the local SQLite database:
+Push the Drizzle schema to your PostgreSQL database:
 ```bash
 pnpm db:push
+```
+Or apply migration files:
+```bash
+pnpm db:migrate
 ```
 
 ### 5. Running the Application

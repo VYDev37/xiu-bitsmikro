@@ -7,8 +7,8 @@ async function seed() {
 
     // Clear old data
     console.log('Clearing old data...');
-    db.delete(dailyLuck).run();
-    db.delete(users).run();
+    await db.delete(dailyLuck);
+    await db.delete(users);
 
     // Insert new data
     console.log('Inserting seed data...');
@@ -20,7 +20,7 @@ async function seed() {
         parallelism: 1
     });
 
-    const insertedUsers = db.insert(users).values([
+    const insertedUsers = await db.insert(users).values([
         {
             name: 'Admin User',
             username: 'admin',
@@ -28,7 +28,7 @@ async function seed() {
             birthDate: '1990-01-01',
             birthTime: '12:00'
         },
-    ]).returning().all();
+    ]).returning();
 
     console.log(`Inserted ${insertedUsers.length} users.`);
     console.log('Seed completed successfully!');

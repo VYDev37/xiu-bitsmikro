@@ -1,10 +1,18 @@
-import type { Config } from 'drizzle-kit';
+import { defineConfig } from 'drizzle-kit';
+import { config } from 'dotenv';
 
-export default {
+config({ path: '.env.local' });
+config();
+
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is not set. Please define it in web/.env.local or web/.env');
+}
+
+export default defineConfig({
   schema: './db/schema.ts',
   out: './db/migrations',
-  dialect: 'sqlite',
+  dialect: 'postgresql',
   dbCredentials: {
-    url: 'sqlite.db',
+    url: process.env.DATABASE_URL,
   },
-} satisfies Config;
+});

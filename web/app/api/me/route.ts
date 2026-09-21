@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const user = db.select().from(users).where(eq(users.id, session.userId)).get();
+  const [user] = await db.select().from(users).where(eq(users.id, session.userId)).limit(1);
   if (!user) {
     session.destroy();
     return NextResponse.json({ error: 'User not found' }, { status: 401 });

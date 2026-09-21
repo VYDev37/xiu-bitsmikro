@@ -32,10 +32,10 @@ export async function POST(req: Request) {
       eq(insightCards.category, category + (user_b ? `_${user_b.birth_date}` : ''))
     ];
 
-    const cached = db.select()
+    const [cached] = await db.select()
       .from(insightCards)
       .where(and(...queryConditions))
-      .get();
+      .limit(1);
 
     if (cached) {
       try {
@@ -118,13 +118,13 @@ export async function POST(req: Request) {
       
       // Save to database
       try {
-        db.insert(insightCards).values({
+        await db.insert(insightCards).values({
           nama: user_a.nama || "User",
           birthDate: user_a.birth_date,
           birthTime: user_a.birth_time,
           category: category + (user_b ? `_${user_b.birth_date}` : ''),
           content: JSON.stringify(parsedData)
-        }).run();
+        });
       } catch (dbErr) {
         console.error("Failed to cache insight card in database:", dbErr);
       }

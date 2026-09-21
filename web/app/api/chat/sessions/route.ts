@@ -12,22 +12,17 @@ export async function GET(req: Request) {
     }
 
     // Fetch all sessions for this user
-    const dbSessions = db.select()
+    const dbSessions = await db.select()
       .from(chatSessions)
       .where(eq(chatSessions.userId, session.userId))
-      .orderBy(desc(chatSessions.createdAt))
-      .all();
+      .orderBy(desc(chatSessions.createdAt));
 
     // Fetch all messages for these sessions
-    // To keep it simple and fast, we can fetch all messages for the user by joining or just iterating
-    // Since it's SQLite, running a query for each session is fine, but fetching all user messages is better.
-    // For now, let's just fetch messages session by session
-    const fullSessions = dbSessions.map(sess => {
-      const msgs = db.select()
+    const fullSessions = await Promise.all(dbSessions.map(async (sess) => {
+      const msgs = await db.select()
         .from(chatMessages)
         .where(eq(chatMessages.sessionId, sess.id))
-        .orderBy(chatMessages.createdAt)
-        .all();
+        .orderBy(chatMessages.createdAt);
 
       return {
         id: sess.id,
@@ -39,7 +34,7 @@ export async function GET(req: Request) {
           content: m.content
         }))
       };
-    });
+    }));
 
     return NextResponse.json(fullSessions);
   } catch (error: unknown) {
@@ -64,15 +59,15 @@ export async function POST(req: Request) {
     }
 
     // Insert session
-    db.insert(chatSessions).values({
+    await db.insert(chatSessions).values({
       id,
       userId: session.userId,
       title,
       createdAt: Date.now()
-    }).run();
+    });
 
     // Insert initial and first message
-    db.insert(chatMessages).values([
+    await db.insert(chatMessages).values([
       {
         id: `init-${id}`, // Make unique per session to prevent constraint errors
         sessionId: id,
@@ -87,7 +82,7 @@ export async function POST(req: Request) {
         content: firstUserMessage.content,
         createdAt: Date.now()
       }
-    ]).run();
+    ]);
 
     return NextResponse.json({ message: 'Session created' });
   } catch (error: unknown) {
@@ -112,13 +107,13 @@ export async function PUT(req: Request) {
     }
 
     // Insert new message
-    db.insert(chatMessages).values({
+    await db.insert(chatMessages).values({
       id: message.id,
       sessionId,
       role: message.role,
       content: message.content,
       createdAt: Date.now()
-    }).run();
+    });
 
     return NextResponse.json({ message: 'Message added' });
   } catch (error: unknown) {
@@ -142,11 +137,10 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'id is required' }, { status: 400 });
     }
 
-    // SQLite with Drizzle cascade delete will handle messages
-    // Wait, better-sqlite3 with drizzle PRAGMA foreign_keys = ON might be needed.
-    // If not, let's manually delete messages first just in case
-    db.delete(chatMessages).where(eq(chatMessages.sessionId, id)).run();
-    db.delete(chatSessions).where(eq(chatSessions.id, id)).run();
+    // In PostgreSQL, foreign keys with onDelete: cascade handle cleanup automatically,
+    // but deleting messages first ensures consistency.
+    await db.delete(chatMessages).where(eq(chatMessages.sessionId, id));
+    await db.delete(chatSessions).where(eq(chatSessions.id, id));
 
     return NextResponse.json({ message: 'Session deleted' });
   } catch (error: unknown) {
