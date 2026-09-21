@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
     const { username, password } = parsed.data;
 
-    const user = db.select().from(users).where(eq(users.username, username)).get();
+    const [user] = await db.select().from(users).where(eq(users.username, username)).limit(1);
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }

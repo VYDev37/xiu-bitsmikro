@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     }
 
     // Check DB cache first
-    const cached = db.select()
+    const [cached] = await db.select()
       .from(monthlyCalendar)
       .where(and(
         eq(monthlyCalendar.nama, user_a.nama || "User"),
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
         eq(monthlyCalendar.birthTime, user_a.birth_time),
         eq(monthlyCalendar.monthYear, monthYear)
       ))
-      .get();
+      .limit(1);
 
     if (cached) {
       try {
@@ -107,13 +107,13 @@ export async function POST(req: Request) {
       
       // Save to database
       try {
-        db.insert(monthlyCalendar).values({
+        await db.insert(monthlyCalendar).values({
           nama: user_a.nama || "User",
           birthDate: user_a.birth_date,
           birthTime: user_a.birth_time,
           monthYear: monthYear,
           data: JSON.stringify(parsedData)
-        }).run();
+        });
       } catch (dbErr) {
         console.error("Failed to cache monthly calendar in database:", dbErr);
       }

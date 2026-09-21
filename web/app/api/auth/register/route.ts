@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
     const { name, username, password, birthDate, birthTime } = parsed.data;
 
-    const existing = db.select().from(users).where(eq(users.username, username)).get();
+    const [existing] = await db.select().from(users).where(eq(users.username, username)).limit(1);
     if (existing) {
       return NextResponse.json({ error: 'Username already exists' }, { status: 400 });
     }
@@ -28,13 +28,13 @@ export async function POST(request: Request) {
       parallelism: 1
     });
 
-    const result = db.insert(users).values({
+    const [result] = await db.insert(users).values({
       name,
       username,
       passwordHash,
       birthDate: birthDate || null,
       birthTime: birthTime || null,
-    }).returning().get();
+    }).returning();
 
     // Setup iron-session
     const session = await getSession();

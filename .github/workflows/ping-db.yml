@@ -1,0 +1,78 @@
+name: Ping Database (Keep-Alive)
+
+on:
+  schedule:
+    # Berjalan setiap 12 jam (pukul 00:00 dan 12:00 UTC)
+    - cron: '0 */12 * * *'
+  workflow_dispatch: # Memungkinkan trigger manual dari tab Actions di GitHub
+
+permissions:
+  contents: read
+
+jobs:
+  ping-database:
+    name: Keep-Alive Database Ping
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Database Securely
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PING_URL: ${{ secrets.PING_URL }}
+        run: |
+          # Pastikan tracing shell nonaktif agar tidak mengekspos environment variable ke log
+          set +x
+
+          echo "=========================================="
+          echo "Starting Database Keep-Alive Check"
+          echo "Timestamp: $(date -u)"
+          echo "=========================================="
+
+          PINGED=0
+
+          # 1. Ping langsung ke PostgreSQL via psql jika DATABASE_URL diisi
+          if [ -n "$DATABASE_URL" ]; then
+            echo "Attempting direct PostgreSQL ping..."
+            
+            # Timeout koneksi diset maksimal 15 detik
+            export PGCONNECT_TIMEOUT=15
+
+            # Output di-redirect ke /dev/null agar detail error/connection string
+            # tidak pernah tercetak di runner logs jika terjadi kegagalan otentikasi
+            if psql "$DATABASE_URL" -c "SELECT 1;" > /dev/null 2>&1; then
+              echo "✅ Direct PostgreSQL ping succeeded! (Database is active)"
+              PINGED=1
+            else
+              echo "❌ Direct PostgreSQL ping failed! (Connection timed out or query failed)"
+              echo "Please verify your DATABASE_URL secret in GitHub Settings > Secrets."
+              exit 1
+            fi
+          fi
+
+          # 2. Ping via HTTP Endpoint jika PING_URL diisi
+          if [ -n "$PING_URL" ]; then
+            echo "Attempting HTTP ping to configured health check endpoint..."
+            
+            # Gunakan curl dengan timeout 30 detik tanpa mencetak URL atau sensitive body ke log
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 30 "$PING_URL")
+
+            echo "Response Status Code: $HTTP_STATUS"
+
+            if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+              echo "✅ HTTP health check ping succeeded!"
+              PINGED=1
+            else
+              echo "❌ HTTP health check failed with status code $HTTP_STATUS"
+              exit 1
+            fi
+          fi
+
+          if [ $PINGED -eq 0 ]; then
+            echo "⚠️ Warning: Neither DATABASE_URL nor PING_URL secret is configured."
+            echo "Please configure DATABASE_URL or PING_URL in GitHub Secrets."
+            exit 1
+          fi
+
+          echo "=========================================="
+          echo "Database ping job completed successfully!"
+          echo "=========================================="

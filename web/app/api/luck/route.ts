@@ -13,7 +13,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const user = db.select().from(users).where(eq(users.id, session.userId)).get();
+  const [user] = await db.select().from(users).where(eq(users.id, session.userId)).limit(1);
   if (!user || !user.birthDate || !user.birthTime) {
     return NextResponse.json({ error: 'Incomplete birth data. Please update your profile.' }, { status: 400 });
   }
@@ -21,10 +21,10 @@ export async function GET() {
   const today = new Date().toISOString().split('T')[0];
 
   // Check cache
-  const cached = db.select()
+  const [cached] = await db.select()
     .from(dailyLuck)
     .where(and(eq(dailyLuck.userId, user.id), eq(dailyLuck.date, today)))
-    .get();
+    .limit(1);
 
   if (cached) {
     try {
@@ -106,11 +106,11 @@ export async function GET() {
     }, 3);
 
     // Save to cache
-    db.insert(dailyLuck).values({
+    await db.insert(dailyLuck).values({
       userId: user.id,
       date: today,
       reading: JSON.stringify(parsed)
-    }).run();
+    });
 
     return NextResponse.json(parsed);
   } catch (error: any) {

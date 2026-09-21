@@ -16,7 +16,7 @@ This directory contains the core Next.js application for Xiu (宿), the AI-power
 - **Core**: Next.js (App Router), React
 - **Styling**: Tailwind CSS, GSAP, Framer Motion, Three.js
 - **Data & State**: Zustand, Zod, React Hook Form, Axios
-- **Backend & Database**: Next.js API Routes, Drizzle ORM, SQLite, Iron-Session
+- **Backend & Database**: Next.js API Routes, Drizzle ORM, PostgreSQL (postgres.js), Iron-Session
 
 ## Setup Instructions
 
@@ -26,12 +26,21 @@ pnpm install
 ```
 
 ### 2. Configure Environment
-Create a `.env.local` file containing your AI provider keys and session secrets.
+Create a `.env.local` file containing your database connection string (`DATABASE_URL`), AI provider keys, and session secrets.
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/projek_trio_darksistem
+SECRET_COOKIE_PASSWORD=complex_password_at_least_32_characters_long_for_iron_session
+GEMINI_API_KEY=your_gemini_api_key
+```
 
 ### 3. Initialize Database
-Apply the database schema to your local SQLite instance:
+Apply the database schema to your PostgreSQL database:
 ```bash
 pnpm db:push
+```
+Or apply migration files:
+```bash
+pnpm db:migrate
 ```
 
 ### 4. Start Development Server

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const user = db.select().from(users).where(eq(users.id, session.userId)).get();
+    const [user] = await db.select().from(users).where(eq(users.id, session.userId)).limit(1);
     if (!user || !user.birthDate || !user.birthTime) {
       return NextResponse.json({ error: 'Incomplete birth data. Please update your profile.' }, { status: 400 });
     }

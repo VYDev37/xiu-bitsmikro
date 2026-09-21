@@ -1,8 +1,8 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { pgTable, serial, text, integer, bigint } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
-export const users = sqliteTable('users', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
   name: text('name').notNull(),
   username: text('username').notNull().unique(), // Simple auth identifier
   passwordHash: text('password_hash').notNull(),
@@ -10,67 +10,67 @@ export const users = sqliteTable('users', {
   birthTime: text('birth_time'), // Format: HH:MM
 });
 
-export const dailyLuck = sqliteTable('daily_luck', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').notNull().references(() => users.id),
+export const dailyLuck = pgTable('daily_luck', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   date: text('date').notNull(), // Format: YYYY-MM-DD
   reading: text('reading').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull().default(sql`(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint`),
 });
 
-export const baziCharts = sqliteTable('bazi_charts', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').references(() => users.id), // Optional, as calculation can be public
+export const baziCharts = pgTable('bazi_charts', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }), // Optional, as calculation can be public
   nama: text('nama').notNull(),
   birthDate: text('birth_date').notNull(),
   birthTime: text('birth_time').notNull(),
   data: text('data').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull().default(sql`(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint`),
 });
 
-export const monthlyCalendar = sqliteTable('monthly_calendar', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').references(() => users.id),
+export const monthlyCalendar = pgTable('monthly_calendar', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
   nama: text('nama').notNull(),
   birthDate: text('birth_date').notNull(),
   birthTime: text('birth_time').notNull(),
   monthYear: text('month_year').notNull(), // format YYYY-MM
   data: text('data').notNull(), // JSON array of highlighted dates
-  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull().default(sql`(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint`),
 });
 
-export const insightCards = sqliteTable('insight_cards', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').references(() => users.id),
+export const insightCards = pgTable('insight_cards', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
   nama: text('nama').notNull(),
   birthDate: text('birth_date').notNull(),
   birthTime: text('birth_time').notNull(),
   category: text('category').notNull(), // love, career, path, wealth, relationship, compatibility
   content: text('content').notNull(), // JSON response string
-  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull().default(sql`(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint`),
 });
 
-export const savedDates = sqliteTable('saved_dates', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').references(() => users.id), // Nullable for guests
+export const savedDates = pgTable('saved_dates', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }), // Nullable for guests
   nama: text('nama').notNull(), // Tie to nama/birthDate if not logged in
   birthDate: text('birth_date').notNull(),
   date: text('date').notNull(), // The saved specific date
   data: text('data').notNull(), // The note content JSON
-  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull().default(sql`(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint`),
 });
 
-export const chatSessions = sqliteTable('chat_sessions', {
+export const chatSessions = pgTable('chat_sessions', {
   id: text('id').primaryKey(),
-  userId: integer('user_id').notNull().references(() => users.id),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull().default(sql`(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint`),
 });
 
-export const chatMessages = sqliteTable('chat_messages', {
+export const chatMessages = pgTable('chat_messages', {
   id: text('id').primaryKey(),
   sessionId: text('session_id').notNull().references(() => chatSessions.id, { onDelete: 'cascade' }),
   role: text('role').notNull(), // 'user' | 'assistant'
   content: text('content').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull().default(sql`(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint`),
 });

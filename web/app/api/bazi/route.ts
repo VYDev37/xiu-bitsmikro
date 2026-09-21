@@ -16,14 +16,14 @@ export async function POST(req: Request) {
     }
 
     // Check DB cache first
-    const cached = db.select()
+    const [cached] = await db.select()
       .from(baziCharts)
       .where(and(
         eq(baziCharts.nama, user_a.nama || "User"),
         eq(baziCharts.birthDate, user_a.birth_date),
         eq(baziCharts.birthTime, user_a.birth_time)
       ))
-      .get();
+      .limit(1);
 
     if (cached) {
       try {
@@ -111,12 +111,12 @@ export async function POST(req: Request) {
       
       // Save to database
       try {
-        db.insert(baziCharts).values({
+        await db.insert(baziCharts).values({
           nama: user_a.nama || "User",
           birthDate: user_a.birth_date,
           birthTime: user_a.birth_time,
           data: JSON.stringify(parsedData)
-        }).run();
+        });
       } catch (dbErr) {
         console.error("Failed to cache BaZi chart in database:", dbErr);
       }

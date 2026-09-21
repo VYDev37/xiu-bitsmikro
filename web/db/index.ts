@@ -1,13 +1,8 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 import * as schema from './schema';
-import path from 'path';
 
-// Construct the path to the sqlite file
-const sqlitePath = path.join(process.cwd(), 'sqlite.db');
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/projek_trio_darksistem';
 
-// Initialize the database connection
-const sqlite = new Database(sqlitePath);
-
-// Create the Drizzle instance
-export const db = drizzle(sqlite, { schema });
+const client = postgres(connectionString, { prepare: false });
+export const db = drizzle(client, { schema });
